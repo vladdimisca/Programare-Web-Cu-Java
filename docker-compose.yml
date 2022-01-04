@@ -1,0 +1,29 @@
+version: '3.7'
+
+services:
+
+  localstack:
+    image: localstack/localstack:latest
+    ports:
+      - "4566:4566"
+    environment:
+      - SERVICES=s3
+      - DEFAULT_REGION=eu-west-1
+      - AWS_DEFAULT_REGION=eu-west-1
+      - HOSTNAME_EXTERNAL=localhost
+      - USE_SSL=false
+      - DATA_DIR=/tmp/localstack/data
+      - DEBUG=1
+    volumes:
+      - "/tmp/localstack:/tmp/localstack"
+      - ./.aws:/docker-entrypoint-initaws.d
+
+  db:
+    image: mysql
+    restart: always
+    environment:
+      MYSQL_DATABASE: 'web'
+      MYSQL_PASSWORD: '4321'
+      MYSQL_ROOT_PASSWORD: '4321'
+    ports:
+      - '3306:3306'
