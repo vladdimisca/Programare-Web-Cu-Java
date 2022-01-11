@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.List;
@@ -43,6 +45,17 @@ public class ExceptionControllerAdvice {
 
         return ResponseEntity
                 .status(HttpStatus.UNPROCESSABLE_ENTITY)
+                .body(getMultipleErrorsResponse(errors));
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ErrorResponse> handleConstraintViolation(ConstraintViolationException exception) {
+        List<ErrorEntity> errors = exception.getConstraintViolations().stream()
+                .map(e -> new ErrorEntity(-1, e.getPropertyPath() + " " + e.getMessage()))
+                .toList();
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
                 .body(getMultipleErrorsResponse(errors));
     }
 
@@ -82,13 +95,14 @@ public class ExceptionControllerAdvice {
                 .body(getSingleErrorResponse(-1, message));
     }
 
-    @ExceptionHandler
-    public ResponseEntity<ErrorResponse> handleDefaultException(Throwable e) {
-        e.printStackTrace(); // Fake a logger
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ErrorResponse> handleAccessDenied() {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+    }
 
-        if (e instanceof AccessDeniedException) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        }
+    @ExceptionHandler
+    public ResponseEntity<ErrorResponse> handleDefaultException(Throwable exception) {
+        exception.printStackTrace(); // Fake a logger
 
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR.value())

@@ -36,7 +36,7 @@ public class UserProgramController {
     public ResponseEntity<UserProgramDto> create(@Valid @RequestBody UserProgramDto userProgramDto) {
         UserProgram userProgram = userProgramService.create(userProgramMapper.mapToEntity(userProgramDto));
         return ResponseEntity
-                .created(URI.create("/api/user-programs/" + userProgram.getId()))
+                .created(URI.create("/api/users-programs/" + userProgram.getId()))
                 .body(userProgramMapper.mapToDto(userProgram));
     }
 

@@ -33,7 +33,7 @@ public class AdmissionFileController {
     public ResponseEntity<AdmissionFileDto> submit() {
         AdmissionFile admissionFile = admissionFileService.submit();
         return ResponseEntity
-                .created(URI.create("/api/admission-file"))
+                .created(URI.create("/api/admission-files/" + admissionFile.getId()))
                 .body(admissionFileMapper.mapToDto(admissionFile));
     }
 

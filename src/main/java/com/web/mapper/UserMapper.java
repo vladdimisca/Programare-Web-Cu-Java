@@ -10,6 +10,7 @@ public interface UserMapper {
 
     @Mapping(target = "documentId", source = "document.id")
     @Mapping(target = "admissionFileId", source = "admissionFile.id")
+    @Mapping(target = "password", expression = "java(null)")
     UserDto mapToDto(User user);
 
     @Mapping(target = "document.id", source = "documentId")

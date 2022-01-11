@@ -1,6 +1,5 @@
 package com.web.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.web.model.enumeration.UserRole;
 
 import javax.validation.constraints.Email;
@@ -19,7 +18,6 @@ public record UserDto(
         String email,
 
         @NotNull
-        @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
         @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z]).{6,}",
                 message = "must contain at least 6 characters including one digit and one lower case letter")
         String password,
@@ -39,4 +37,7 @@ public record UserDto(
         @Null
         Long admissionFileId
         ) {
+        public UserDto(UUID id, String email, String password) {
+                this(id, email, password, null, null, null, null, null);
+        }
 }
